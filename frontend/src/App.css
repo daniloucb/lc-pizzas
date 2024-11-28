@@ -1,38 +1,60 @@
-.App {
+/* App.css */
+
+/* Estilo geral da página */
+.app-container {
+  font-family: 'Arial', sans-serif;
   text-align: center;
+  margin: 20px;
+  padding: 10px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Estilos para a lista de produtos */
+.product-list {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Estilos para cada item de produto */
+.product-item {
+  width: 200px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.product-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
+
+.product-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.product-item h2 {
+  font-size: 1.2rem;
+  color: #34495e;
+  margin: 10px 0;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  color: #e74c3c;
+  margin-bottom: 15px;
+}
+
