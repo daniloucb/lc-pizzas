@@ -1,42 +1,58 @@
-import React from 'react';
-import ProductItem from './ProductItem';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import ProductItem from "./ProductItem";
+import { getProducts } from "../api";
 
-// Mock de dados de produtos
-const products = [
-  {
-    id: 1,
-    name: 'Hamburguer Clássico',
-    price: 15.99,
-    image: 'https://via.placeholder.com/150?text=Hamburguer+Clássico'
-  },
-  {
-    id: 2,
-    name: 'Pizza Margherita',
-    price: 29.99,
-    image: 'https://via.placeholder.com/150?text=Hamburguer+Clássico'
-  },
-  {
-    id: 3,
-    name: 'Batata Frita',
-    price: 8.50,
-    image: 'https://via.placeholder.com/150?text=Hamburguer+Clássico'
-  },
-  {
-    id: 4,
-    name: 'Suco de Laranja',
-    price: 5.00,
-    image: 'https://via.placeholder.com/150?text=Hamburguer+Clássico'
-  },
-];
+const ProductList = ({ selectedCategory, setSelectedProduct }) => {
+  const [products, setProducts] = useState([]);
 
-const ProductList = () => {
+  useEffect(() => {
+    // Carregar produtos da API
+    getProducts().then((response) => {
+      setProducts(response.data);
+    });
+  }, []);
+
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.idCategoria === selectedCategory)
+    : products;
+
   return (
-    <div className="product-list">
-      {products.map((product) => (
-        <ProductItem key={product.id} product={product} />
+    <ProductListContainer>
+      {filteredProducts.map((product) => (
+        <ProductItem
+          setSelectedProduct={setSelectedProduct}
+          key={product.idProduto} // Supondo que idProduto seja único
+          product={product}
+        />
       ))}
-    </div>
+    </ProductListContainer>
   );
 };
+
+const ProductListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Default: 4 columns per row */
+  gap: 20px;
+  margin: 180px auto;
+
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 columns per row on medium screens */
+    gap: 15px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 columns per row on smaller screens */
+    gap: 10px;
+    margin: 230px auto;
+  }
+`;
 
 export default ProductList;
