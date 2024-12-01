@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-// Importando as funções de API
+// Importing API functions
 import {
   createCategory,
   getCategories,
@@ -17,11 +17,11 @@ const SettingsPage = () => {
   const [products, setProducts] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [newProduct, setNewProduct] = useState({
-    nomeProduto: "",
-    precoProduto: "",
-    descricaoProduto: "",
-    bannerProduto: "",
-    idCategoria: "", // this will hold the category ID, not the name
+    name: "",
+    price: "",
+    description: "",
+    banner: "",
+    categoryId: "", // holds the category ID for products
   });
 
   useEffect(() => {
@@ -32,130 +32,117 @@ const SettingsPage = () => {
   const loadCategories = async () => {
     try {
       const response = await getCategories();
-      setCategories(response.data); // Ajuste conforme a estrutura da resposta da API
+      setCategories(response.data); // Adjust based on API response structure
     } catch (error) {
-      console.error("Erro ao carregar categorias:", error);
+      console.error("Error loading categories:", error);
     }
   };
 
   const loadProducts = async () => {
     try {
       const response = await getProducts();
-      setProducts(response.data); // Ajuste conforme a estrutura da resposta da API
+      setProducts(response.data); // Adjust based on API response structure
     } catch (error) {
-      console.error("Erro ao carregar produtos:", error);
+      console.error("Error loading products:", error);
     }
   };
 
   const handleAddCategory = async () => {
+    if (!newCategory) return; // Avoid empty category
     try {
-      const category = await createCategory({ nomeCategoria: newCategory });
-
+      const response = await createCategory({ name: newCategory });
+      console.log(response);
       setCategories((prevCategories) => [
         ...prevCategories,
-        category.data.data,
+        response.data.category, // Adjust based on API response structure
       ]);
-
-      setNewCategory(""); // Clear the input field
+      setNewCategory(""); // Reset input
     } catch (error) {
-      console.error("Erro ao criar categoria:", error);
+      console.error("Error creating category:", error);
     }
   };
 
   const handleDeleteCategory = async (id) => {
     try {
-      // Envia a requisição para deletar a categoria no banco de dados
       await deleteCategory(id);
-
-      loadCategories();
-
-      // Atualiza a lista de categorias localmente, removendo a categoria com o id especificado
+      loadCategories(); // Reload categories after deletion
       setCategories((prevCategories) =>
         prevCategories.filter((category) => category.id !== id)
       );
     } catch (error) {
-      console.error("Erro ao deletar categoria:", error);
+      console.error("Error deleting category:", error);
     }
   };
 
   const handleAddProduct = async () => {
+    if (!newProduct.name || !newProduct.price) return; // Validate non-empty name and price
     try {
       const response = await createProduct(newProduct);
-      setProducts([...products, response.data.data]); // Atualiza a lista de produtos
+      console.log(response);
+      setProducts((prevProducts) => [...prevProducts, response]);
       setNewProduct({
-        nomeProduto: "",
-        precoProduto: "",
-        descricaoProduto: "",
-        bannerProduto: "",
-        idCategoria: "", // Reset category to empty
-      }); // Limpa os campos de entrada
+        name: "",
+        price: "",
+        description: "",
+        banner: "",
+        categoryId: "",
+      }); // Reset input fields
     } catch (error) {
-      console.error("Erro ao criar produto:", error);
+      console.error("Error creating product:", error);
     }
   };
 
   const handleDeleteProduct = (id) => {
-    setProducts(products.filter((product) => product.id !== id));
+    setProducts((prevProducts) =>
+      prevProducts.filter((product) => product.id !== id)
+    );
   };
 
   const handleGoBack = () => {
-    navigate(-1); // Volta uma página na pilha de navegação
+    navigate(-1); // Navigate back to the previous page
   };
 
-  // Agrupar os produtos por categoria
-  // Agrupar os produtos por categoria
   const groupedProducts = products.reduce((acc, product) => {
-    // Encontrar a categoria correspondente ao idCategoria do produto
-    const category = categories.find(
-      (category) => Number(category.idCategoria) === Number(product.idCategoria)
-    );
-
-    // Verificar se a categoria foi encontrada
+    console.log(product)
+    const category = categories.find((category) => {
+      return category.id === product.categoryId;
+    });
     if (category) {
-      const categoryName = category.nomeCategoria;
-
-      // Se a categoria ainda não existir no acumulador, criamos uma nova chave
+      const categoryName = category.name;
       if (!acc[categoryName]) {
         acc[categoryName] = [];
       }
-
-      // Adicionamos o produto à categoria correspondente
       acc[categoryName].push(product);
     } else {
-      console.warn(
-        `Categoria não encontrada para o produto: ${product.idProduto}`
-      );
+      console.warn(`Category not found for product: ${product.id}`);
     }
-
     return acc;
   }, {});
 
   return (
     <SettingsContainer>
       <Header>
-        <h1>Configurações da lanchonete</h1>
-        <BackButton onClick={handleGoBack}>Voltar</BackButton>
+        <h1>Settings</h1>
+        <BackButton onClick={handleGoBack}>Go Back</BackButton>
       </Header>
 
       <Section>
-        <h2>Categorias</h2>
+        <h2>Categories</h2>
         <InputRow>
           <input
             type="text"
-            placeholder="Nova Categoria"
+            placeholder="New Category"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
           />
-          <button onClick={handleAddCategory}>Adicionar</button>
+          <button onClick={handleAddCategory}>Add</button>
         </InputRow>
         <CategoryList>
           {categories.map((category) => (
-            <CategoryItem key={category.idCategoria}>
-              <span>{category.nomeCategoria}</span>
-              <button
-                onClick={() => handleDeleteCategory(category.idCategoria)}
-              >
-                Excluir
+            <CategoryItem key={category.id}>
+              <span>{category.name}</span>
+              <button onClick={() => handleDeleteCategory(category.id)}>
+                Delete
               </button>
             </CategoryItem>
           ))}
@@ -163,75 +150,69 @@ const SettingsPage = () => {
       </Section>
 
       <Section>
-        <h2>Produtos</h2>
+        <h2>Products</h2>
         <InputRow>
           <input
             type="text"
-            placeholder="Nome do Produto"
-            value={newProduct.nomeProduto}
+            placeholder="Product Name"
+            value={newProduct.name}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, nomeProduto: e.target.value })
+              setNewProduct({ ...newProduct, name: e.target.value })
             }
           />
           <select
-            value={newProduct.idCategoria}
+            value={newProduct.categoryId}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, idCategoria: e.target.value })
+              setNewProduct({ ...newProduct, categoryId: e.target.value })
             }
           >
-            <option value="">Selecione a Categoria</option>
+            <option value="">Select Category</option>
             {categories.map((category) => (
-              <option key={category.idCategoria} value={category.idCategoria}>
-                {category.nomeCategoria}
+              <option key={category.id} value={category.id}>
+                {category.name}
               </option>
             ))}
           </select>
           <input
             type="number"
-            placeholder="Preço"
-            value={newProduct.precoProduto}
+            placeholder="Price"
+            value={newProduct.price}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, precoProduto: e.target.value })
+              setNewProduct({ ...newProduct, price: e.target.value })
             }
           />
           <input
             type="text"
-            placeholder="Descrição"
-            value={newProduct.descricaoProduto}
+            placeholder="Description"
+            value={newProduct.description}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, descricaoProduto: e.target.value })
+              setNewProduct({ ...newProduct, description: e.target.value })
             }
           />
           <input
             type="text"
-            placeholder="URL do Banner"
-            value={newProduct.bannerProduto}
+            placeholder="Banner URL"
+            value={newProduct.banner}
             onChange={(e) =>
-              setNewProduct({ ...newProduct, bannerProduto: e.target.value })
+              setNewProduct({ ...newProduct, banner: e.target.value })
             }
           />
-          <button onClick={handleAddProduct}>Adicionar</button>
+          <button onClick={handleAddProduct}>Add</button>
         </InputRow>
 
-        {/* Exibindo produtos por categoria */}
         {Object.keys(groupedProducts).map((category) => (
           <ProductCategorySection key={category}>
             <h3>{category}</h3>
             <ProductList>
               {groupedProducts[category].map((product) => (
-                <ProductCard key={product.idProduto}>
-                  <ProductImage
-                    src={product.bannerProduto}
-                    alt={product.nomeProduto}
-                  />
-                  <ProductName>{product.nomeProduto}</ProductName>
+                <ProductCard key={product.id}>
+                  <ProductImage src={product.banner} alt={product.name} />
+                  <ProductName>{product.name}</ProductName>
                   <ProductPrice>
-                    R$ {Number(product.precoProduto).toFixed(2)}
+                    R$ {Number(product.price).toFixed(2)}
                   </ProductPrice>
-                  <DeleteButton
-                    onClick={() => handleDeleteProduct(product.idProduto)}
-                  >
-                    Excluir
+                  <DeleteButton onClick={() => handleDeleteProduct(product.id)}>
+                    Delete
                   </DeleteButton>
                 </ProductCard>
               ))}
@@ -265,7 +246,6 @@ const BackButton = styled.button`
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s;
-
   &:hover {
     background-color: #ccc;
   }
@@ -281,19 +261,17 @@ const Section = styled.div`
 
 const InputRow = styled.div`
   display: flex;
-  flex-wrap: wrap; /* Permite que os elementos quebrem para uma nova linha */
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
-
   input,
   select {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
-    width: calc(100% - 20px); /* Para evitar overflow */
+    width: calc(100% - 20px);
     max-width: 200px;
   }
-
   button {
     background-color: #4caf50;
     color: white;
@@ -304,19 +282,8 @@ const InputRow = styled.div`
     cursor: pointer;
     width: calc(100% - 20px);
     max-width: 150px;
-
     &:hover {
       background-color: #45a049;
-    }
-  }
-
-  /* Responsividade */
-  @media (max-width: 768px) {
-    flex-direction: column; /* Alinha itens verticalmente */
-    input,
-    select,
-    button {
-      width: 100%; /* Ocupa toda a largura disponível */
     }
   }
 `;
@@ -331,7 +298,6 @@ const CategoryItem = styled.li`
   justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid #ccc;
-
   button {
     background-color: red;
     color: white;
@@ -339,7 +305,6 @@ const CategoryItem = styled.li`
     border: none;
     border-radius: 8px;
     cursor: pointer;
-
     &:hover {
       background-color: #d32f2f;
     }
@@ -352,54 +317,33 @@ const ProductCategorySection = styled.div`
 
 const ProductList = styled.div`
   display: flex;
-  gap: 20px; /* Espaço entre os cards */
-  overflow-x: auto; /* Habilita a rolagem horizontal */
-  padding: 10px 0; /* Espaço para destacar os elementos */
-
-  /* Remove a barra de rolagem visível em navegadores suportados */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari e Edge */
-  }
-
-  /* Garantindo que os itens tenham tamanho fixo e sejam roláveis */
-  > div {
-    flex-shrink: 0; /* Evita que os cards encolham */
-  }
+  gap: 20px;
+  overflow-x: auto;
+  padding: 20px 0;
 `;
 
 const ProductCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: white;
   border-radius: 8px;
-  padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 180px;
+  width: 200px;
+  padding: 15px;
   text-align: center;
 `;
 
 const ProductImage = styled.img`
   width: 100%;
-  min-height: 150px;
-  object-fit: contain;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  height: auto;
+  border-radius: 8px;
 `;
 
-const ProductName = styled.span`
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 5px;
+const ProductName = styled.h4`
+  font-size: 18px;
+  margin: 10px 0;
 `;
 
-const ProductPrice = styled.span`
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 10px;
+const ProductPrice = styled.p`
+  color: #888;
 `;
 
 const DeleteButton = styled.button`
@@ -409,7 +353,7 @@ const DeleteButton = styled.button`
   border: none;
   border-radius: 8px;
   cursor: pointer;
-
+  margin-top: 10px;
   &:hover {
     background-color: #d32f2f;
   }

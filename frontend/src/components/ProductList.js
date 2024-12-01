@@ -14,7 +14,7 @@ const ProductList = ({ selectedCategory, setSelectedProduct }) => {
   }, []);
 
   const filteredProducts = selectedCategory
-    ? products.filter((product) => product.idCategoria === selectedCategory)
+    ? products.filter((product) => product.categoryId === selectedCategory)
     : products;
 
   return (
@@ -22,7 +22,7 @@ const ProductList = ({ selectedCategory, setSelectedProduct }) => {
       {filteredProducts.map((product) => (
         <ProductItem
           setSelectedProduct={setSelectedProduct}
-          key={product.idProduto} // Supondo que idProduto seja único
+          key={product.id} // Supondo que id seja único
           product={product}
         />
       ))}
@@ -34,7 +34,7 @@ const ProductListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* Default: 4 columns per row */
   gap: 20px;
-  margin: 180px auto;
+  margin: 100px auto;
 
   /* Responsiveness */
   @media (max-width: 768px) {
@@ -51,7 +51,7 @@ const ProductListContainer = styled.div`
       1fr
     ); /* 2 columns per row on smaller screens */
     gap: 10px;
-    margin: 230px auto;
+    margin: 100px auto;
   }
 `;
 

@@ -50,14 +50,14 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
         <ModalBody>
           <ProductImageContainer>
             <ProductImage
-              src={productDetails.bannerProduto}
-              alt={productDetails.nomeProduto}
+              src={productDetails.banner}
+              alt={productDetails.name}
             />
           </ProductImageContainer>
           <ProductInfo>
-            <h3>{productDetails.nomeProduto}</h3>
-            <p>{productDetails.descricaoProduto}</p>
-            <PriceText>R$ {Number(product.precoProduto).toFixed(2)}</PriceText>
+            <h3>{productDetails.name}</h3>
+            <p>{productDetails.description}</p>
+            <PriceText>R$ {Number(product.price).toFixed(2)}</PriceText>
             <DetailsInput
               placeholder="Retirar queijo, ovo..."
               value={details}
@@ -71,7 +71,7 @@ const ProductModal = ({ isOpen, onClose, product, onAddToCart }) => {
               </QuantityContainer>
               <AddToCartButton onClick={handleAddToCart}>
                 Adicionar R$ {""}
-                {quantity * Number(product.precoProduto).toFixed(2)}
+                {quantity * Number(product.price).toFixed(2)}
               </AddToCartButton>
             </ModalFooter>
           </ProductInfo>
@@ -104,7 +104,6 @@ const ModalContainer = styled.div`
   flex-direction: row;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     flex-direction: column;
     padding: 15px;
@@ -117,7 +116,6 @@ const ModalBody = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
@@ -129,7 +127,6 @@ const ProductImageContainer = styled.div`
   margin-right: 20px;
   width: 300px;
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     width: 100%;
     margin-right: 0;
@@ -160,7 +157,6 @@ const ProductInfo = styled.div`
     color: #555;
   }
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     padding-left: 0;
     text-align: center;
@@ -184,7 +180,6 @@ const DetailsInput = styled.textarea`
   min-height: 80px;
   box-sizing: border-box;
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     min-height: 60px;
   }
@@ -197,7 +192,6 @@ const ModalFooter = styled.div`
   margin-top: 20px;
   width: 100%;
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
@@ -207,7 +201,7 @@ const ModalFooter = styled.div`
 const QuantityContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px; /* Adds space between the elements in the quantity section */
+  gap: 10px;
 
   button {
     background-color: #f0f0f0;
@@ -217,23 +211,22 @@ const QuantityContainer = styled.div`
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 5px;
-    height: 40px; /* Ensure button height is consistent */
-    width: 40px; /* Make the buttons equal width */
+    height: 40px;
+    width: 40px;
   }
 
   div {
     font-size: 20px;
     font-weight: bold;
     padding: 5px 15px;
-    height: 40px; /* Ensures the quantity div matches the height of the buttons */
+    height: 40px;
     display: flex;
-    align-items: center; /* Vertically center the quantity number */
+    align-items: center;
     justify-content: center;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     gap: 8px;
   }
@@ -249,13 +242,12 @@ const AddToCartButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
-  height: 40px; /* Make the button the same height as the quantity controls */
+  height: 40px;
 
   &:hover {
     background-color: #45a049;
   }
 
-  /* Responsiveness for smaller screens */
   @media (max-width: 768px) {
     width: 100%;
     margin-top: 10px;

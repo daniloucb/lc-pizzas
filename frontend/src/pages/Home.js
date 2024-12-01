@@ -14,7 +14,7 @@ function Home() {
     if (product) {
       setCartItems((prevCartItems) => {
         const existingProductIndex = prevCartItems.findIndex(
-          (item) => item.idProduto === product.idProduto // Verifica pelo ID único do produto
+          (item) => item.id === product.id // Verifica pelo ID único do produto
         );
 
         if (existingProductIndex !== -1) {
@@ -78,6 +78,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 100px; // Ensure content below the fixed header
 `;
 
 const Header = styled.div`

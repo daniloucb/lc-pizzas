@@ -11,15 +11,15 @@ const ProductItem = ({ product, setSelectedProduct }) => {
     >
       <div style={styles.imageContainer}>
         <img
-          src={product.bannerProduto}
-          alt={product.nomeProduto}
+          src={product.banner}
+          alt={product.name}
           style={styles.productImage}
         />
       </div>
       <div style={{ height: "100%" }}>
-        <h2 style={styles.productName}>{product.nomeProduto}</h2>
+        <h2 style={styles.productName}>{product.name}</h2>
         <p style={styles.productPrice}>
-          Preço: R$ {Number(product.precoProduto).toFixed(2)}
+          Preço: R$ {Number(product.price).toFixed(2)}
         </p>
       </div>
     </div>
@@ -52,9 +52,9 @@ const styles = {
     borderRadius: "4px",
   },
   productImage: {
-    maxWidth: "100%",
-    maxHeight: "100%",
-    objectFit: "fill", // Maintain aspect ratio without distortion
+    width: "100%",
+    height: "100%",
+    objectFit: "cover", // Maintain aspect ratio without distortion
   },
   productName: {
     fontSize: "1rem",

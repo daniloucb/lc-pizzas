@@ -14,7 +14,7 @@ export const HeaderTop = ({ cartItems, setCartItems }) => {
   }, [cartItems]);
 
   const removeItemFromCart = async (itemId) => {
-    await setCartItems(cartItems.filter((item) => item.idProduto !== itemId));
+    await setCartItems(cartItems.filter((item) => item.id !== itemId));
   };
 
   return (
@@ -37,21 +37,21 @@ export const HeaderTop = ({ cartItems, setCartItems }) => {
           ) : (
             <ul>
               {cartItems.map((item) => (
-                <CartItem key={item.idProduto}>
+                <CartItem key={item.id}>
                   <CartItemImage
-                    src={item.bannerProduto}
-                    alt={item.nomeProduto}
+                    src={item.banner}
+                    alt={item.name}
                   />
                   <CartItemDetails>
                     <CartItemName>
-                      {item.nomeProduto} x{item.quantity}
+                      {item.name} x{item.quantity}
                     </CartItemName>
                     <CartItemPrice>
-                      R$ {item.quantity * Number(item.precoProduto).toFixed(2)}
+                      R$ {item.quantity * Number(item.price).toFixed(2)}
                     </CartItemPrice>
                   </CartItemDetails>
                   <RemoveButton
-                    onClick={() => removeItemFromCart(item.idProduto)}
+                    onClick={() => removeItemFromCart(item.id)}
                   >
                     Remover
                   </RemoveButton>

@@ -1,32 +1,34 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getCategories } from "../api";
+import { getCategories } from "../api"; // Ensure this path is correct
 
 const Categories = ({ selectCategory, selectedCategory }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    // Carregar categorias da API
-    getCategories().then((response) => {
-      setCategories(response.data);
-    });
+    // Load categories from the API
+    getCategories()
+      .then((response) => {
+        setCategories(response.data); // Assuming response.data is the array of categories
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+      });
   }, []);
 
   return (
     <CategoryList>
       {categories.map((category) => (
         <CategoryTag
-          key={category.idCategoria} // Supondo que idCategoria seja único
-          isSelected={category.idCategoria === selectedCategory}
+          key={category.id} // Assuming 'id' is unique for each category
+          isSelected={category.id === selectedCategory}
           onClick={() =>
             selectCategory(
-              category.idCategoria === selectedCategory
-                ? null
-                : category.idCategoria
+              category.id === selectedCategory ? null : category.id
             )
           }
         >
-          {category.nomeCategoria}
+          {category.name}
         </CategoryTag>
       ))}
     </CategoryList>
